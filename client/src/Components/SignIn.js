@@ -1,6 +1,38 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { server } from '../API/Server';
 
 const SignIn = () => {
+
+    const [user,setUser] = useState({
+        email:'',
+        password:''
+    })
+    
+    const handleChange = (e) => {
+      try {
+        setUser({
+          ...user,
+          [e.target.name]: e.target.value,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const navigate = useNavigate()
+    const hanldeSubmit = (e) => {
+      try {
+        const userData = { ...user };
+        axios.post(`${server}api/user/login`, userData).then((res) => {
+          console.log("res", res);
+        });
+        navigate('/')
+        // setUser(" ")
+      } catch (error) {
+        console.log(error);
+      }
+    };
   return (
     <>
       <section className="bg-gray-50 dark:bg-gray-900">
@@ -36,7 +68,8 @@ const SignIn = () => {
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
-                    required=""
+                    required
+                    onChange={handleChange}
                   />
                 </div>
                 <div>
@@ -52,13 +85,15 @@ const SignIn = () => {
                     id="password"
                     placeholder="••••••••"
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required=""
+                    required
+                    onChange={handleChange}
                   />
                 </div>
                 
 
                 <button
                   type="submit"
+                  onClick={hanldeSubmit}
                   className="w-full text-white bg-blue-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Login

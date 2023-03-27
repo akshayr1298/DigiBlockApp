@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { server } from "../API/Server";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [user, setUser] = useState({
@@ -20,17 +23,20 @@ const Signup = () => {
     }
   };
 
-  const hanldeSubmit = (e)=>{
+  const navigate = useNavigate();
+
+  const hanldeSubmit = (e) => {
     try {
-        const userData = {...user}
-        axios.post(`${server}api/user`,userData).then((res)=>{
-            console.log('res',res);
-        })
-        // setUser(" ")
+      e.preventDefault();
+      const userData = { ...user };
+      console.log(userData);
+      axios.post(`${server}api/user`, userData).then((res) => {});
+      navigate('/signin')
+      // setUser(" ")
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
+  };
 
   return (
     <>
@@ -68,7 +74,6 @@ const Signup = () => {
                     placeholder="name@company.com"
                     required
                     onChange={handleChange}
-
                   />
                 </div>
                 <div>
