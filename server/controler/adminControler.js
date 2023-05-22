@@ -1,4 +1,5 @@
 import Rooms from "../model/roomModel.js";
+import User from '../model/userModel.js'
 
 const adminLogin = async (req, res, next) => {
   try {
@@ -63,6 +64,16 @@ const updateRooms = async (req, res, next) => {
   }
 };
 
+const delectUser = async (req, res, next) => {
+  try {
+    console.log("req");
+    const id = req.params.id;
+    await User.deleteOne({ _id: id });
+    return res.status(200).json({ message: "user delected successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
 const delectRooms = async (req, res, next) => {
   try {
     console.log("req");
@@ -74,4 +85,4 @@ const delectRooms = async (req, res, next) => {
   }
 };
 
-export { addRooms, adminLogin, updateRooms, delectRooms, getRooms };
+export { addRooms, adminLogin, updateRooms, delectRooms, getRooms,delectUser };

@@ -14,7 +14,8 @@ const userSchema =  mongoose.Schema({
         checkOut:{type:String,required:true},
         guest:{type:String,required:true},
         bookingDate:{type:String,required:true},
-    }]
+    }],
+    apikey:[{type:String,required:true,expireAt:"1m"}]
 })
 
 export default mongoose.model("User",userSchema)
