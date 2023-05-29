@@ -51,10 +51,15 @@ const signIn = async (req, res, next) => {
     const token = jwt.sign({ email }, process.env.jwt_secret, {
       expiresIn: "20m",
     });
-    res.cookie("access_token", token, { maxAge: 600000, httpOnly: true });
+    const refreshToken = jwt.sign({email},process.env.jwt_secret,{
+      expiresIn:'7d'
+    })
+    
+    res.cookie('access_token',token,{ maxAge: 600000, httpOnly: true });
+    res.cookie('refresh_token', refreshToken, { httpOnly: true })
     res
       .status(200)
-      .json({ message: "Successfully logged in", access_token: token });
+      .json({ message: "Successfully logged in",access_token: token,refresh_token:refreshToken });
   } catch (error) {
     console.error(error);
     next(error);
@@ -75,13 +80,16 @@ const searchRooms = async (req, res, next) => {
 const subcribtion = async (req, res, next) => {
   try {
     // const {id} = req.params
-    console.log('sub',req.body);
+    console.log("sub", req.body);
+    const { name, email } = req.body;
     const apikey = crypto.randomBytes(32).toString("hex");
-    console.log('apikey',apikey);
-    const token = jwt.sign({ apikey }, process.env.jwt_secret, {
-      expiresIn: "20m",
+    console.log("apikey", apikey);
+    const token = jwt.sign({ name, email }, process.env.jwt_secret, {
+      expiresIn: "20s",
     });
     // await User.findByIdAndUpdate({id:id}, {$push: {apikey:token}})
+    const decode = jwt.decode(token, process.env.jwt_secret);
+    console.log("decode", decode);
     return res
       .status(200)
       .json({ message: "api key generated", api_key: token });
@@ -90,32 +98,45 @@ const subcribtion = async (req, res, next) => {
   }
 };
 
-const createCanidate = async(req,res,next)=>{
+const createCanidate = async (req, res, next) => {
   try {
-    const {PAN,SSN,candidatePhone,candidateEmail,candidateName,trustScore} = req.body
-    await Candidate.create({PAN,SSN,candidatePhone,candidateEmail,candidateName,trustScore})
-    res.status(200).json({message:"candidate created"})
+    const {
+      PAN,
+      SSN,
+      candidatePhone,
+      candidateEmail,
+      candidateName,
+      trustScore,
+    } = req.body;
+    await Candidate.create({
+      PAN,
+      SSN,
+      candidatePhone,
+      candidateEmail,
+      candidateName,
+      trustScore,
+    });
+    res.status(200).json({ message: "candidate created" });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-const createApi = async(req,res,next)=>{
+const createApi = async (req, res, next) => {
   try {
-    const {key,companyId,expiryDate,usageLimit,usageCount} = req.body
-    await APIKey.create({key,companyId,expiryDate,usageLimit,usageCount})
-    res.status(200).json({message:"api, created"})
+    const { key, companyId, expiryDate, usageLimit, usageCount } = req.body;
+    await APIKey.create({ key, companyId, expiryDate, usageLimit, usageCount });
+    res.status(200).json({ message: "api, created" });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const getTrustScore = async (req, res, next) => {
   try {
-    console.log('reqqq');
-    // const { candidates } = req.body;
-    const candidates = await Candidate.find()
-    console.log('candi',candidates[0]);
+    console.log("reqqq");
+    const candidates = await Candidate.find();
+    console.log("candi", candidates);
 
     // Validate the API key
     // const token = req.header("Authorization").replace("Bearer ", "");
@@ -149,14 +170,15 @@ const getTrustScore = async (req, res, next) => {
 
     // Fetch the trust scores
     const results = [];
+
     for (let i = 0; i < candidates.length; i++) {
       const candidate = candidates[i];
       const candidateDoc = await Candidate.findOne({
         PAN: candidate.PAN,
-        SSN: candidate.SSN,
-        candidatePhone: candidate.candidatePhone,
-        candidateEmail: candidate.candidateEmail,
-        candidateName: candidate.candidateName,
+        // SSN: candidate.SSN,
+        // candidatePhone: candidate.candidatePhone,
+        // candidateEmail: candidate.candidateEmail,
+        // candidateName: candidate.candidateName,
       });
       if (!candidateDoc) {
         results.push({
@@ -178,6 +200,12 @@ const getTrustScore = async (req, res, next) => {
   }
 };
 
-
-
-export { signUp, signIn, searchRooms,subcribtion,getTrustScore,createCanidate,createApi };
+export {
+  signUp,
+  signIn,
+  searchRooms,
+  subcribtion,
+  getTrustScore,
+  createCanidate,
+  createApi,
+};

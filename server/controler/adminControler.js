@@ -1,5 +1,6 @@
 import Rooms from "../model/roomModel.js";
-import User from '../model/userModel.js'
+import User from "../model/userModel.js";
+import moment from "moment";
 
 const adminLogin = async (req, res, next) => {
   try {
@@ -43,6 +44,12 @@ const addRooms = async (req, res, next) => {
 const getRooms = async (req, res, next) => {
   try {
     const getrooms = await Rooms.find();
+    const date1 = new Date("2023-05-23T10:00:00Z");
+    const date2 = new Date("2023-05-23T11:30:00Z");
+    const differenceInSeconds = Math.floor(
+      (date2.getTime() - date1.getTime()) / 1000
+    );
+    console.log("Difference in seconds:", differenceInSeconds);
     return res.status(200).json({ getrooms });
   } catch (error) {
     next(error);
@@ -85,4 +92,19 @@ const delectRooms = async (req, res, next) => {
   }
 };
 
-export { addRooms, adminLogin, updateRooms, delectRooms, getRooms,delectUser };
+// const isSubscriptionExpired = (req, res,next) => {
+
+//   const currentDate = moment().startOf("day");
+//   const subscriptionStart = moment(startDate).startOf("day");
+//   const subscriptionEnd = moment(endDate).startOf("day");
+
+//   return currentDate.isAfter(subscriptionEnd) || currentDate.isSame(subscriptionEnd);
+// };
+
+// // Example usage
+// const subscriptionStartDate = new Date("2023-05-01") ;
+// const subscriptionEndDate = new Date("2023-06-01");
+// const expired = isSubscriptionExpired(subscriptionStartDate, subscriptionEndDate);
+// console.log(expired); // true or false
+
+export { addRooms, adminLogin, updateRooms, delectRooms, getRooms, delectUser };
