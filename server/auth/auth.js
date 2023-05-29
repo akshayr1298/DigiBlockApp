@@ -1,31 +1,8 @@
-// import jwt from "jsonwebtoken";
-
-// export const verifyToken = (req,res,next)=>{
-//     try {
-//         console.log('cookies',req.cookies);
-//         const token = req.cookies.access_token
-//         const refreshToken = req.cookies.refresh_token
-//         console.log('token',token,'refresh',refreshToken);
-//         if(!token){
-//             return res.status(401).json({message:"You are not authenticated"})
-//         }
-//         jwt.verify(token,process.env.jwt_secret,(err,user)=>{
-//             if(err)
-//             return res.status(403).json({message:'Invaild token'})
-//             req.user = user
-//             next()
-//         })
-
-        
-//     } catch (error) {
-//         next(error)
-//     }
-// }
 
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  try {
+  try { 
     console.log('cookies', req.cookies);
     const token = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
